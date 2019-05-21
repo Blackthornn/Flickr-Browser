@@ -1,17 +1,20 @@
 package com.theblackthorn.flickrbrowser
 
 import android.net.Uri
-import android.nfc.NdefRecord.createUri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity(), GetRawData.onDownloadComplete, GetFlickrJsonData.onDataAvailable {
     private val TAG = "MainActivity"
+
+    private val flickrRecyclerViewAdapter = FlickrRecyclerViewAdapter(ArrayList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "***onCreate called***")
@@ -19,7 +22,10 @@ class MainActivity : AppCompatActivity(), GetRawData.onDownloadComplete, GetFlic
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne", "android,oreo", "en-us", true)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.adapter = flickrRecyclerViewAdapter
+
+        val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne", "android,oreo","en-us", true)
         val getRawData = GetRawData(this)
         getRawData.execute(url)
 
@@ -76,7 +82,7 @@ class MainActivity : AppCompatActivity(), GetRawData.onDownloadComplete, GetFlic
 
     override fun onDataAvailable(data: List<Photo>) {
         Log.d(TAG, "***.onDataAvailable called, data is $data***")
-
+        flickrRecyclerViewAdapter.loadNewData(data)
         Log.d(TAG, "***.onDataAvailable ends***")
     }
 
