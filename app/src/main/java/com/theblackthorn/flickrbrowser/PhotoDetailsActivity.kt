@@ -1,22 +1,35 @@
 package com.theblackthorn.flickrbrowser
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.content_photo_details.*
 
-import kotlinx.android.synthetic.main.activity_photo_details.*
 
-class PhotoDetailsActivity : AppCompatActivity() {
+class PhotoDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_details)
-        setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        activateToolBar(true)
+
+       // val photo = intent.getSerializableExtra(PHOTO_TRANSFER) as Photo
+
+        val photo = intent.extras.getParcelable<Photo>(PHOTO_TRANSFER) as Photo
+
+        //photo_title.text = "Title: " + photo.title
+        //photo_tags.text = "Tags: " + photo.tags
+        photo_title.text = resources.getString(R.string.photo_title_text, photo.title)
+        photo_tags.text = resources.getString(R.string.photo_tags_text, photo.tags)
+
+        photo_author.text = photo.author
+
+       // photo_author.text = resources.getString(R.string.photo_author_text, "my", "red", "car")
+
+        Picasso.with(this).load(photo.link)
+            .error(R.drawable.brokenimage)
+            .placeholder(R.drawable.placeholder)
+            .into(photo_image)
     }
 
 }
